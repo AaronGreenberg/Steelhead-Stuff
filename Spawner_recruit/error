@@ -1,0 +1,31 @@
+$par
+[1]  0.04349021 51.98844168
+
+$value
+[1] 59.06956
+
+$counts
+function gradient 
+     153       NA 
+
+$convergence
+[1] 0
+
+$message
+NULL
+
+$hessian
+              [,1]         [,2]
+[1,]  2.970565e+05 -0.226224925
+[2,] -2.262249e-01  0.008139713
+
+Loading required package: KernSmooth
+KernSmooth 2.23 loaded
+Copyright M. P. Wand 1997-2009
+Loading required package: Cairo
+Loading required package: tikzDevice
+Error in QETmat[i, ] <- ifelse(out$QET > 100, 0, 1) : 
+  number of items to replace is not a multiple of replacement length
+Calls: data_forcast
+In addition: There were 27 warnings (use warnings() to see them)
+Execution halted

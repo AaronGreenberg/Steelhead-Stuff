@@ -1,0 +1,344 @@
+
+simple_age_model_lin <- function(years,SF,SP,SM,F,a,b,N)
+{
+
+                
+    
+    T<-t(matrix(c(0,0,0,F,0,F,0,F,
+                  SF,0,0,0,0,0,0,0,
+                  0,SF,0,0,0,0,0,0,
+                  0,0,a*SP,0,0,0,0,0,
+                  0,0,(1-a)*SP,0,0,0,0,0,
+                  0,0,0,0, b*SM,0,0,0,
+                  0,0,0,0, (1-b)*SM,0,0,0,
+                  0,0,0,0,0,0,SM,SM),
+                nrow=8))
+ #   print(signif(T,3))
+    ei <- eigen(T)
+    truematrix <- matrix(0,nrow=8,ncol=years)
+    
+    for(i in 1:years)
+    {
+        if(i==1)
+        {
+            truematrix[,i]=T%*%(N)
+            
+        }else{
+            truematrix[,i]=T%*%(truematrix[,i-1])
+            
+            }
+       
+                
+    }
+return(list(truemat=truematrix,ei=ei))
+    }
+
+
+
+
+
+repeat_age_model_lin <- function(years,SF,SP,SM,F,a,b,N,R)
+{
+
+                  
+    T<-t(matrix(c(0,0,0,F,0,F,0,F,
+                  SF,0,0,0,0,0,0,0,
+                  0,SF,0,0,0,0,0,0,
+                  0,0,a*SP,0,0,0,0,0,
+                  0,0,(1-a)*SP,0,0,0,0,0,
+                  0,0,0,R*SM, b*SM,0,0,0,
+                  0,0,0,0, (1-b)*SM,0,0,0,
+                  0,0,0,0,0,R*SM,SM,SM),#6
+                 nrow=8))
+
+    print(signif(T,3))
+    ei <- eigen(T)
+    truematrix <- matrix(0,nrow=8,ncol=years)
+    
+    for(i in 1:years)
+    {
+        if(i==1)
+        {
+            truematrix[,i]=T%*%(N)
+            
+        }else{
+            truematrix[,i]=T%*%(truematrix[,i-1])
+            
+            }
+       
+                
+    }
+return(list(truemat=truematrix,ei=ei))
+    }
+
+
+
+
+
+
+plot_full_age <- function(years,SF,SP,SM,F,a,b,N,R=.135,type="S",age=1)
+{
+
+     labels <- c("1 year old","2 year old","3 year old","4 year old spawner","4 year old ocean","5 year old spawner","5 year old ocean","6 year old")
+    print("yo")
+    print(age)
+    if(type=="S"){
+    p <- simple_age_model_lin(years,SF,SP,SM,F,a,b,N)
+    }
+
+    if(type=="R"){
+    p <- repeat_age_model_lin(years,SF,SP,SM,F,a,b,N,R)
+
+    }
+       plot(p$truemat[age,],type="h",ylab=paste("Year ",labels[age]),lwd=15,xlab="Year",col="blue")
+ 
+    }
+
+
+
+table_full_age <- function(years,SF,SP,SM,F,a,b,N,R=.135,type="S")
+{
+
+     labels <- c("1 YO","2 YO","3 YO","4 YO spawner","4 YO ocean","5 YO spawner","5 YO ocean","6 YO")
+
+    if(type=="S"){
+    p <- simple_age_model_lin(years,SF,SP,SM,F,a,b,N)$truemat
+    }
+
+    if(type=="R"){
+    p <- repeat_age_model_lin(years,SF,SP,SM,F,a,b,N,R)$truemat
+
+    }
+    print(p)
+    p <- t(p)
+    p2 <- sweep(p, 1, rowSums(p), FUN = "/")
+    colnames(p2) <- labels
+    return(as.data.frame(p2))
+
+   }
+
+
+
+
+plot_recruit_spawner <- function(years,SF,SP,SM,F,a,b,N,R=.135,type="S")
+{
+    if(type=="R"){
+    p <- repeat_age_model_lin(years,SF,SP,SM,F,a,b,N,R)
+    }
+   if(type=="S"){
+       p <- simple_age_model_lin(years,SF,SP,SM,F,a,b,N)
+   }
+    ei <- p$ei
+    print(ei)
+    spawners <- 1:years
+    recruits <- 1:years
+
+    for(i in 2:years)
+        {
+            spawners[i] <- sum(p$truemat[c(4,6,8),i-1])
+            recruits[i] <- p$truemat[1,i-1]
+         
+        }
+    plot(recruits/spawners,type="o", ylab="R/S",xlab="time",main=paste("lambda=:",signif(ei$value[1],3)))
+    abline(h=ei$value[1],col="red")
+ }
+
+## plot_full_age(12,.04,.64,.022,2416,.9,.3,(8:1),"S")
+
+## x11()
+
+## plot_full_age(12,.04,.64,.022,2416,.9,.3,(8:1),R=.134,"R")
+## x11()
+## plot_recruit_spawner(12,.04,.64,.022,2416,.9,.3,(8:1),R=.134,"R")
+
+
+    
+                                        #Trying to estimate survivals right now is not going well and
+
+
+## #print(age_model_lin(10,.4,.6,.2,2147,1,1,2))
+## print("yup")
+## data=read.csv("steelhead.csv",sep="\t")
+## print(data)
+
+## fit_model <- function(FS,SP,SM,F,N,a,b,data,years)
+##     {
+
+##         o1 <- age_model_lin(years,FS,SP,SM,F,a,b,N)$truemat[c(4,6,8),]
+##         o2 <- (data)
+##         ## print(o1)
+##         ## print(o2)
+##         eps <- (o2-o1)
+##         #print(eps)
+##         return(eps)
+##     }
+
+
+
+## initpar=log(c(.05,c(10^4,10^3,400,158,158,72,72,1.5)))
+
+## ## s <- age_model_lin(12,.04,SP=.24,SM=exp(initpar[1]),2416,.5,.3,exp(initpar[2:9]))$eigenstuff
+## ## print(s)
+## ## initv <- s$vector[,1]
+
+## ## print(initv)
+
+## fn <- function(initpar){
+
+##     eps <- fit_model(.1,SP=.24,SM=exp(initpar[1]),F=2416,N=exp(initpar[2:9]),a=1,b=1,data,years=12)
+##     out <-sum(-log(dnorm(0,eps$Age4,sd(eps$Age4))))+sum(-log(dnorm(0,eps$Age5,sd(eps$Age5))))+sum(-log(dnorm(0,eps$Age6,sd(eps$Age6))))
+##     #out <-sum(eps$Age4^2)+sum(eps$Age5^2)+sum(eps$Age6^2)
+##     return(out)
+## }
+## out <- optim(initpar,fn,method="Nelder-Mead",control=list(maxit=10000,reltol=10^(-16)))
+## print(c("par"))
+## print(exp(out$par))
+
+
+## snazzy <- age_model_lin(years=12,SF=.1,SP=.24,SM=exp(out$par[1]),F=2416,a=1,b=1,N=exp(out$par[2:9]))
+## x11()
+## matplot(t(snazzy$truemat),type="l")
+
+## x11()
+## matplot(t(snazzy$eimat),type="l")
+
+## x11()
+## matplot(t(snazzy$truemat[c(4,6,8),]),type="l")
+## matplot(t(snazzy$eimat[c(4,6,8),]),type="l",add=T)
+## matplot((data),type="p",add=T)
+
+## print(signif(t(snazzy$truemat),4))
+## print(data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## recruitperspawner <- function(N1,N0,F,SF,SP,SM,Rr) #The model 
+## {
+##     rps_observed <- N1/N0
+##     rps_predicted <- F*SF*SP*SM*(1+Rr) #only need to estimate SF?
+##   return(Rps=list(rps_obs=rps_observed,rps_pre=rps_predicted,epsilon=rps_predicted-rps_observed))
+
+## }
+
+
+## DPSDPE <-  function(DPS,DPE,N1,N0,F,SF,SM,Rr)
+## {
+##     SJUS <- .6 #Foster to SJU survival 
+##     SP <- DPS*DPE*SJUS
+##     rps_observed <- N1/N0
+##     print(c(N1,N0))
+##     rps_predicted <- F*SF*SP*SM*(1+Rr)
+##     if(length(rps_predicted)==length(rps_observed))
+##     {
+##         epsilon=rps_predicted-rps_observed
+##     }else
+##     {
+##         epsilon=NA
+##     }
+    
+##   return(Rps=list(rps_obs=rps_observed,rps_pre=rps_predicted,epsilon=epsilon))
+
+## }
+
+
+
+## #So just to make equation one have some randomness
+## #I might make a quick shiny app that makes these inputs 
+
+
+## ## eggs <- rnorm(5000,2084,50)#the distribution of female eggs
+## ## freshwatersurvival <- rnorm(5000,.051,.01)#distribution of freshwater survival
+## ## marinesurvival <- rnorm(5000,.02,.01)#distribution of freshwater survival 
+## ## DPS <- rnorm(5000,.39,.7)
+## ## DPE <- rnorm(5000,.39,.7)
+
+
+## ## data <- read.csv("steelhead.csv",sep="\t")
+## ## print(data)
+## densitymagic <- function(radio,mean,std,sample=10000)
+## {
+##     if(radio==1){
+##         print("silly1")
+##         out <- rnorm(sample,mean,std)
+##     }
+    
+##     if(radio==2){ print("silly2");out <- rlnorm(sample,log(mean),std)}
+##     return(out)
+## }
+
+## DPSDPEplot1 <- function(DPS,DPE,eggs,freshwatersurvival,marinesurvival,Rr,data)
+## {
+## par(mfcol=c(3,1))
+## hist(eggs, main="Histogram of Eggs")
+## abline(v=mean(eggs),col="red")
+## abline(v=median(eggs),col="blue")
+## abline(v=mean(eggs)+2*sd(eggs),col="purple")
+## abline(v=mean(eggs)-2*sd(eggs),col="purple")
+
+## hist(freshwatersurvival,main="Histogram of Fresh Water Survival")
+## abline(v=mean(freshwatersurvival),col="red")
+## abline(v=median(freshwatersurvival),col="blue")
+## abline(v=mean(freshwatersurvival)+2*sd(freshwatersurvival),col="purple")
+## abline(v=mean(freshwatersurvival)-2*sd(freshwatersurvival),col="purple")
+
+## hist(marinesurvival, main="Histogram of Marine Survival")
+## abline(v=mean(marinesurvival),col="red")
+## abline(v=median(marinesurvival),col="blue")
+## abline(v=mean(marinesurvival)+2*sd(marinesurvival),col="purple")
+## abline(v=mean(marinesurvival)-2*sd(marinesurvival),col="purple")
+
+## }
+
+
+## DPSDPEplot2 <- function(DPS,DPE,eggs,freshwatersurvival,marinesurvival,Rr,data)
+## {
+## par(mfcol=c(1,2))
+
+## hist(DPS,main="Histogram of Dam Passage Survival")
+## abline(v=mean(DPS),col="red")
+## abline(v=median(DPS),col="blue")
+## abline(v=mean(DPS)+2*sd(DPS),col="purple")
+## abline(v=mean(DPS)-2*sd(DPS),col="purple")
+
+## hist(DPE,main="Histogram of Dam Passage Efficency")
+## abline(v=mean(DPE),col="red")
+## abline(v=median(DPE),col="blue")
+## abline(v=mean(DPE)+2*sd(DPE),col="purple")
+## abline(v=mean(DPE)-2*sd(DPE),col="purple")
+
+## }
+
+## DPSDPEplot3 <- function(DPS,DPE,eggs,freshwatersurvival,marinesurvival,Rr,data)
+## {
+
+##     print(data)
+##     RS <- DPSDPE(DPS, DPE, data$RV,data$Spawner,eggs,freshwatersurvival,marinesurvival,Rr)$rps_pre
+
+## hist(RS,xlim=c(0,max(c(1.2,max(RS)))),col="grey",xlab="Recruits/Spawner",main=paste("Recruits per Spawner Equation 1=:",signif(mean(RS),4),sep=" "))
+     
+## abline(v=1,col="red",lwd=4)
+## }

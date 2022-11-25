@@ -1,0 +1,105 @@
+recruitperspawner <- function(N1,N0,F,SF,SP,SM,Rr) #The model 
+{
+    rps_observed <- N1/N0
+    rps_predicted <- F*SF*SP*SM*(1+Rr) #only need to estimate SF?
+  return(Rps=list(rps_obs=rps_observed,rps_pre=rps_predicted,epsilon=rps_predicted-rps_observed))
+
+}
+
+
+DPSDPE <-  function(DPS,DPE,N1,N0,F,SF,SM,Rr)
+{
+    SJUS <- .6 #Foster to SJU survival 
+    SP <- DPS*DPE*SJUS
+    rps_observed <- N1/N0
+    print(c(N1,N0))
+    rps_predicted <- F*SF*SP*SM*(1+Rr)
+    if(length(rps_predicted)==length(rps_observed))
+    {
+        epsilon=rps_predicted-rps_observed
+    }else
+    {
+        epsilon=NA
+    }
+    
+  return(Rps=list(rps_obs=rps_observed,rps_pre=rps_predicted,epsilon=epsilon))
+
+}
+
+
+#So just to make equation one have some randomness
+#I might make a quick shiny app that makes these inputs 
+
+
+## eggs <- rnorm(5000,2084,50)#the distribution of female eggs
+## freshwatersurvival <- rnorm(5000,.051,.01)#distribution of freshwater survival
+## marinesurvival <- rnorm(5000,.02,.01)#distribution of freshwater survival 
+## DPS <- rnorm(5000,.39,.7)
+## DPE <- rnorm(5000,.39,.7)
+
+
+## data <- read.csv("steelhead.csv",sep="\t")
+## print(data)
+densitymagic <- function(radio,mean,std,sample=10000)
+{
+    if(radio==1){
+        print("silly1")
+        out <- rnorm(sample,mean,std)
+    }
+    
+    if(radio==2){ print("silly2");out <- rlnorm(sample,log(mean),std)}
+    return(out)
+}
+
+DPSDPEplot1 <- function(DPS,DPE,eggs,freshwatersurvival,marinesurvival,Rr,data)
+{
+par(mfcol=c(3,1))
+hist(eggs, main="Histogram of Eggs")
+abline(v=mean(eggs),col="red")
+abline(v=median(eggs),col="blue")
+abline(v=mean(eggs)+2*sd(eggs),col="purple")
+abline(v=mean(eggs)-2*sd(eggs),col="purple")
+
+hist(freshwatersurvival,main="Histogram of Fresh Water Survival")
+abline(v=mean(freshwatersurvival),col="red")
+abline(v=median(freshwatersurvival),col="blue")
+abline(v=mean(freshwatersurvival)+2*sd(freshwatersurvival),col="purple")
+abline(v=mean(freshwatersurvival)-2*sd(freshwatersurvival),col="purple")
+
+hist(marinesurvival, main="Histogram of Marine Survival")
+abline(v=mean(marinesurvival),col="red")
+abline(v=median(marinesurvival),col="blue")
+abline(v=mean(marinesurvival)+2*sd(marinesurvival),col="purple")
+abline(v=mean(marinesurvival)-2*sd(marinesurvival),col="purple")
+
+}
+
+
+DPSDPEplot2 <- function(DPS,DPE,eggs,freshwatersurvival,marinesurvival,Rr,data)
+{
+par(mfcol=c(1,2))
+
+hist(DPS,main="Histogram of Dam Passage Survival")
+abline(v=mean(DPS),col="red")
+abline(v=median(DPS),col="blue")
+abline(v=mean(DPS)+2*sd(DPS),col="purple")
+abline(v=mean(DPS)-2*sd(DPS),col="purple")
+
+hist(DPE,main="Histogram of Dam Passage Efficency")
+abline(v=mean(DPE),col="red")
+abline(v=median(DPE),col="blue")
+abline(v=mean(DPE)+2*sd(DPE),col="purple")
+abline(v=mean(DPE)-2*sd(DPE),col="purple")
+
+}
+
+DPSDPEplot3 <- function(DPS,DPE,eggs,freshwatersurvival,marinesurvival,Rr,data)
+{
+
+    print(data)
+    RS <- DPSDPE(DPS, DPE, data$RV,data$Spawner,eggs,freshwatersurvival,marinesurvival,Rr)$rps_pre
+
+hist(RS,xlim=c(0,max(c(1.2,max(RS)))),col="grey",xlab="Recruits/Spawner",main=paste("Recruits per Spawner Equation 1=:",signif(mean(RS),4),sep=" "))
+     
+abline(v=1,col="red",lwd=4)
+}

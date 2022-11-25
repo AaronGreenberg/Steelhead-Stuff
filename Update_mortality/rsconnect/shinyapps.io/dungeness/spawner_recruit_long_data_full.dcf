@@ -1,0 +1,11 @@
+name: spawner_recruit_long_data_full
+title:
+username:
+account: dungeness
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6534469
+bundleId: 6521982
+url: https://dungeness.shinyapps.io/spawner_recruit_long_data_full/
+when: 1668625573.59044
+lastSyncTime: 1668625573.59046

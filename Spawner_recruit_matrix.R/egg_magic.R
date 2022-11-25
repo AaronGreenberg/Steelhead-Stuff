@@ -1,0 +1,41 @@
+require(KernSmooth)
+egg<-function(xx,yy,col1="red",bw=20,title="m")
+{
+    bwx=abs((max(xx,na.rm=TRUE)-min(xx,na.rm=TRUE))/bw)
+    bwy=abs((max(yy,na.rm=TRUE)-min(yy,na.rm=TRUE))/bw)
+	est <- bkde2D(cbind(xx,yy),bandwidth=c(bwx,bwy),gridsize=c(81, 81)) #kernal density estimate
+	est$fhat=est$fhat/max(est$fhat,na.rm=TRUE)
+	lvs=c(0.05,.2,0.9) #what contour lines where?
+	maxct=max(lvs)
+	nlvs=length(lvs)
+        thelines=contourLines(est$x1,est$x2,est$fhat,levels=lvs)#three contours is enough
+        polygon(thelines[[1]]$x,thelines[[1]]$y,col=col1,border="red",lwd=1.1)
+        polygon(thelines[[2]]$x,thelines[[2]]$y,col=NA,border="blue",lwd=.2)
+    polygon(thelines[[3]]$x,thelines[[3]]$y,col=NA,border="black",lwd=.1)
+    text(median(xx,na.rm=TRUE),median(yy,na.rm=TRUE),labels=title)
+}
+
+#make some fake distributions
+a1 <- rnorm(10000,30,20)
+a2 <- rnorm(10000,20,2)
+b1 <- rnorm(10000,50,40)
+b2 <- rnorm(10000,28,26)
+c1 <- rnorm(10000,36,20)
+c2 <- rnorm(10000,25,7)
+d1 <- rnorm(10000,38,23)
+d2 <- rnorm(10000,22,2)
+
+#we need some colors
+        rgb.val <- col2rgb("grey27")
+        alpha1=50 #transparency is fun
+                                        #make the plot axis
+
+plot(NA,NA,ylim=c(0,80),xlim=c(0,80),xlab="something",ylab="don't be daft")
+                                        #add the distributions
+egg(a1,a2,col1=rgb(rgb.val[1], rgb.val[2], rgb.val[3],max=255,alpha=alpha1),title="bedtime")
+egg(b1,b2,col1=rgb(rgb.val[1], rgb.val[2], rgb.val[3],max=255,alpha=alpha1),title="kazzam")
+egg(c1,c2,col1=rgb(rgb.val[1], rgb.val[2], rgb.val[3],max=255,alpha=alpha1),title="wow")
+egg(d1,d2,col1=rgb(rgb.val[1], rgb.val[2], rgb.val[3],max=255,alpha=alpha1),title="omg")
+
+
+#I have no real love for the color scheme or formatting

@@ -1,0 +1,11 @@
+name: spawner_recruit
+title:
+username:
+account: dungeness
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5778726
+bundleId: 6004398
+url: https://dungeness.shinyapps.io/spawner_recruit/
+when: 1655154699.78499
+lastSyncTime: 1655154699.78501

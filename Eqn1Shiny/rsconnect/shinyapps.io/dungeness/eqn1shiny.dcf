@@ -1,0 +1,11 @@
+name: eqn1shiny
+title:
+username:
+account: dungeness
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5552241
+bundleId: 6302910
+url: https://dungeness.shinyapps.io/eqn1shiny/
+when: 1663194172.51742
+lastSyncTime: 1663194172.51744

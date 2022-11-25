@@ -1,0 +1,147 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+\documentclass{report}
+\usepackage[a4paper]{geometry} % Use A4 paper margins
+\usepackage{color} % Required for color customization
+\usepackage{times}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage[numbers,sort&compress]{natbib}
+\definecolor{Navy}{RGB}{50,90,122} % Define a custom color for the heading box
+%----------------------------------------------------------------------------------------
+\begin{document}
+% ----------------------------------------------------------------------------------------
+
+As I have been slowly learning about what we are doing through
+imperfectly communicating with Eric and Tom I have slowly been
+figuring out what this project is and what the goals of it are.
+
+
+
+The first model that I could understand is the non-time
+dependent model put forth in Equation 1.  This model was coded up in
+the first week that I joined the project and was shared with the
+team. It allows for the input of 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Just to keep it simple to implement I just write the model as a
+matrix such that $A_{t+1}=T*A_t$.  Note that currently $F$ is just the
+number of eggs, but it could easily be some sort of density dependent
+function. The nice thing about doing things this way is that simply
+replacing the matrix $T$ with a new matrix effectively changes the
+model without much code rewriting. I made a version with repeat
+spawners and without repeat spawners. 
+
+I spent some time trying to fit to the age data. However, there are a
+lot of parameters. Initial abundance in each class, freshwater
+survival, marine survival, the proportion of age 4 and 5 fish that
+spawn.  Many of these parameters get effectively multiplied by each
+other to predict age 4,5,6 fish. It did not seem to work that well.
+I will spend some more time trying to calibrate after the meeting
+tomorrow.  Certainly marine survival could change overtime, but we
+need a likelihood function to maximize. 
+
+
+I am currently not keeping direct
+count of age 7+ fish, but 6+ year old fish always spawn and mostly
+die. The spreadsheet says there are 6 percent age 6 fish and almost no
+age 7 fish.  However, it is certainly possible to add more age
+classes.
+
+I apologize for not knowing how to cut and paste matrices between word
+and R. I am trying to develop my word skills, but I also wanted to
+make sure that the matrices in this document were exactly as in the R
+code. 
+
+\section{No Repeat Spawners}
+This is shown by the simple model under ``Are there Repeat
+Spawners?''.   
+
+\[
+ T = 
+  \begin{matrix}
+                  0&0&0&F&0&F&0&F\\
+                  SF&0&0&0&0&0&0&0\\
+                  0&SF&0&0&0&0&0&0\\
+                  0&0&a*SP&0&0&0&0&0\\
+                  0&0&(1-a)*SP&0&0&0&0&0\\
+                  0&0&0&0& b*SM&0&0&0\\
+                  0&0&0&0& (1-b)*SM&0&0&0\\
+                  0&0&0&0&0&0&SM&SM
+
+  \end{matrix}
+\]
+
+Or equivalently
+
+\begin{align*} 
+  A1_{T+1}&=F \cdot A4_Ts+F \cdot A5s_T+F \cdot A6_T\\
+  A2_{T+1}&=SF \cdot A1_T\\
+  A3_{T+1}&=SF \cdot A2_T\\
+  A4s_{T+1}&=aSP \cdot A3_T\\
+  A4o_{T+1}&=(1-a)SP \cdot A3_T\\
+  A5s_{T+1}&=bSM \cdot A4_To\\
+  A5o_{T+1}&=(1-b)SM \cdot A4_To\\
+  A6_{T+1}&=SM \cdot A5o_T+SM \cdot A6_T\\
+\end{align*}
+
+    % T<-t(matrix(c(0,0,0,F,0,F,0,F, #1
+    %              SF,0,0,0,0,0,0,0,  #2
+    %              0,SP,0,0,0,0,0,0,  #3
+    %              0,0,a*SM,0,0,0,0,0,  #4s
+    %              0,0,(1-a)*SM,0,SM,0,0,0,  #40
+    %              0,0,0,SM, 0,b*SM,0,0,  #5
+    %              0,0,0,0, 0,(1-b)*SM,SM,0,  #5
+    %              0,0,0,0,0, 0,0,SM),#6
+    %             nrow=8))
+
+
+
+\section{Repeat Spawners}
+
+
+
+\[
+ T = 
+  \begin{matrix}
+                  0&0&0&F&0&F&0&F\\
+                  SF&0&0&0&0&0&0&0\\
+                  0&SF&0&0&0&0&0&0\\
+                  0&0&a*SP&0&0&0&0&0\\
+                  0&0&(1-a)*SP&0&0&0&0&0\\
+                  0&0&0&R*SM& b*SM&0&0&0\\
+                  0&0&0&0& (1-b)*SM&0&0&0\\
+                  0&0&0&0&0&R*SM&SM&SM
+
+  \end{matrix}
+\]
+
+
+
+
+\end{document}
+

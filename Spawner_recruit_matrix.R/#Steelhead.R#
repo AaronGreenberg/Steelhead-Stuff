@@ -1,0 +1,123 @@
+FreshwaterSurv=1.85173/100
+ProbPass=50/100 #DPE*DPS*.75
+MarineSurv=(1:30)*0+3.2/100 #constant Marine Survival
+Pv4 <- 68.2/100
+Pv5 <- 31.2/100
+Pv6 <- .6/100
+Repeat6 <- 16/100
+
+
+#initalize proportion of Brood years doing different things
+PR5=55.6/100*16/100
+PR6=42/100*16/100
+PR7=2.5/100*16/100
+
+#initalize data structures just empty vectors
+smolts_pre_dam=(1:30)*0
+smolts_post_dam=(1:30)*0
+OceanAdults=(1:30)*0
+vir4=OceanAdults
+vir5=OceanAdults
+vir6=OceanAdults
+rep5=OceanAdults
+rep6=OceanAdults
+rep7=OceanAdults
+
+#initialize year 1
+smolts_pre_dam[1]=2078*106*FreshwaterSurv #One hundred Spawners in in 2009
+smolts_post_dam[1]=smolts_pre_dam[1]*ProbPass #pass through the dam
+OceanAdults[1]=smolts_post_dam[1]*MarineSurv[1] #survive into the Ocean
+ vir4[1]=Pv4*OceanAdults[1] #The ones that return 4
+ vir5[1]=Pv5*OceanAdults[1] #The ones that return 5
+ vir6[1]=Pv6*OceanAdults[1] #The ones that return 6
+ rep5[1]=PR5*OceanAdults[1] #The ones that repeat  return 5
+ rep6[1]=PR6*OceanAdults[1] #The ones that repeat  return 6
+ rep7[1]=PR7*OceanAdults[1] #The ones that repeat  return 7
+
+smolts_pre_dam[2]=2078*271 *FreshwaterSurv#2010
+smolts_post_dam[2]=smolts_pre_dam[2]*ProbPass
+OceanAdults[2]=smolts_post_dam[2]*MarineSurv[2]
+vir4[2]=Pv4*OceanAdults[2]
+vir5[2]=Pv5*OceanAdults[2]
+vir6[2]=Pv6*OceanAdults[2]
+rep5[2]=16/100*vir4[i-1]
+rep6[2]=16/100*vir5[i-1]
+rep7[2]=16/100*vir6[i-1]
+
+
+
+smolts_pre_dam[3]=2078*198*FreshwaterSurv#2011
+smolts_post_dam[3]=smolts_pre_dam[3]*ProbPass
+OceanAdults[3]=smolts_post_dam[3]*MarineSurv[3]
+
+vir4[3]=Pv4*OceanAdults[3]
+vir5[3]=Pv5*OceanAdults[3]
+vir6[3]=Pv6*OceanAdults[3]
+rep5[3]=PR5*OceanAdults[3]
+rep6[3]=PR6*OceanAdults[3]
+rep7[3]=PR7*OceanAdults[3]
+
+
+smolts_pre_dam[4]=2078*179*FreshwaterSurv #2012
+smolts_post_dam[4]=smolts_pre_dam[4]*ProbPass
+OceanAdults[4]=smolts_post_dam[4]*MarineSurv[4]
+vir4[4]=Pv4*OceanAdults[4]
+vir5[4]=Pv5*OceanAdults[4]
+vir6[4]=Pv6*OceanAdults[4]
+rep5[4]=PR5*OceanAdults[4]
+rep6[4]=PR6*OceanAdults[4]
+rep7[4]=PR7*OceanAdults[4]
+
+
+smolts_pre_dam[5]=2078*168 *FreshwaterSurv#2013
+smolts_post_dam[5]=smolts_pre_dam[5]*ProbPass
+OceanAdults[5]=smolts_post_dam[5]*MarineSurv[5]
+vir4[5]=Pv4*OceanAdults[5]
+vir5[5]=Pv5*OceanAdults[5]
+vir6[5]=Pv6*OceanAdults[5]
+rep5[5]=PR5*OceanAdults[5]
+rep6[5]=PR6*OceanAdults[5]
+rep7[5]=PR7*OceanAdults[5]
+
+
+
+smolts_pre_dam[6]=2078*128*FreshwaterSurv #2014
+smolts_post_dam[6]=smolts_pre_dam[6]*ProbPass
+OceanAdults[6]=smolts_post_dam[6]*MarineSurv[6]
+vir4[6]=Pv4*OceanAdults[6]
+vir5[6]=Pv5*OceanAdults[6]
+vir6[6]=Pv6*OceanAdults[6]
+rep5[6]=PR5*OceanAdults[6]
+rep6[6]=PR6*OceanAdults[6]
+rep7[6]=PR7*OceanAdults[6]
+
+smolts_pre_dam[7]=2078*81*FreshwaterSurv#2015
+smolts_post_dam[7]=smolts_pre_dam[7]*ProbPass
+OceanAdults[7]=smolts_post_dam[7]*MarineSurv[7]
+vir4[7]=Pv4*OceanAdults[7]
+vir5[7]=Pv5*OceanAdults[7]
+vir6[7]=Pv6*OceanAdults[7]
+rep5[7]=PR5*OceanAdults[7]
+rep6[7]=PR6*OceanAdults[7]
+rep7[7]=PR7*OceanAdults[7]
+
+
+for(i in 8:30)
+{
+  smolts_pre_dam[i]=2078*(vir4[i-4]+vir5[i-5]+vir6[i-6]+rep5[i-5]+rep6[i-6]+rep7[i-7])*FreshwaterSurv
+  smolts_post_dam[i]=smolts_pre_dam[i]*ProbPass
+  OceanAdults[i]=smolts_post_dam[i]*MarineSurv[i]
+  vir4[i]=Pv4*OceanAdults[i]
+  vir5[i]=Pv5*OceanAdults[i]
+  vir6[i]=Pv6*OceanAdults[i]
+  rep5[i]=PR5*OceanAdults[i]
+  rep6[i]=PR6*OceanAdults[i]
+  rep7[i]=PR7*OceanAdults[i]
+}
+
+
+
+print("Ocean Adults")
+print(OceanAdults)
+print("Smolts_pre_dam")
+print(smolts_pre_dam)

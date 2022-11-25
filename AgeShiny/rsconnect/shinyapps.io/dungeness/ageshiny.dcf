@@ -1,0 +1,11 @@
+name: ageshiny
+title:
+username:
+account: dungeness
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5560021
+bundleId: 5566269
+url: https://dungeness.shinyapps.io/ageshiny/
+when: 1644526164.58847
+lastSyncTime: 1644526164.58849

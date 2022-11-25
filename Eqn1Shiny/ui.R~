@@ -1,0 +1,96 @@
+library(shiny)
+library(shinythemes)
+                                        # Define UI for application that draws a histogram
+shinyUI(fluidPage(theme=shinytheme("journal"),
+                                        #theme = "bootstrap.min.css",title="Depletion",
+                  
+                                        #Application title-;
+                  ## headerPanel(
+                  ##    HTML(
+                  ##           '
+                  ##          <img src="http://www.cfrn-rcrp.ca/styles/ccfrn_global/images/cfrn_rcrp_logo.png"  width="399" height="102"  alt="Smiley face" > 
+                  ##          <img src="http://brand.ubc.ca/files/2012/08/UBCLogo_Black1.png"  width="86" height="102"  alt="Smiley face" align="right" >
+                  ##           </div>'
+                  ##       )),
+
+                                        # Application title
+                  titlePanel("Recruits Per Spawner Eqn 1"),
+                  sidebarLayout(
+                      sidebarPanel(
+                          radioButtons("DDPS", label = h3("Distribution"),inline=TRUE,
+                                       choices = list("norm" = 1, "lognorm" = 2),selected = 2),
+                          sliderInput("DPSmean",
+                                      "Average DPS:",
+                                      sep="",
+                                      min = 0,
+                                      max =1,
+                                      value = .66),
+                          sliderInput("DPSsd",
+                                      "Standard Deviation DPS:",
+                                      sep="",
+                                      min = 0,
+                                      max =1,
+                                      value = .15),
+                          radioButtons("DDPE", label = h3("Distribution"),inline=TRUE,
+                                       choices = list("norm" = 1, "lognorm" = 2),selected = 2),
+
+                          sliderInput("DPEmean",
+                                      "Average DPE:",
+                                      sep="",
+                                      min = 0,
+                                      max =1,
+                                      value = .6),
+                          sliderInput("DPEsd",
+                                      "Standard Deviation DPE:",
+                                      sep="",
+                                      min = 0,
+                                      max =1,
+                                      value = .15),
+                          radioButtons("Deggs", label = h3("Distribution"),inline=TRUE,
+                                       choices = list("norm" = 1, "lognorm" = 2),selected = 1),
+
+                          
+                          numericInput("eggsmean",
+                                       "Average Eggs:",
+                                       min = 3000,
+                                       max =9000,
+                                       value = 2417),
+                          numericInput("eggssd",
+                                       "Standard Deviation Eggs:",
+                                       min = 0,
+                                       max =1000,
+                                       value = 40),
+                          radioButtons("DFS", label = h3("Distribution"),inline=TRUE,
+                                       choices = list("norm" = 1, "lognorm" = 2),selected = 2),
+
+                          numericInput("freshwatersurvivalmean",
+                                       "Average Freshwater survival:",
+                                       min = 0,
+                                       max =1,
+                                       value = 4.382/100),
+                          numericInput("freshwatersurvivalsd",
+                                       "Standard Deviation freshwater survival:",
+                                       min = 0,
+                                       max =1,
+                                       value = .002),
+                          radioButtons("DMS", label = h3("Distribution"),inline=TRUE,
+                                       choices = list("norm" = 1, "lognorm" = 2),selected = 2),
+
+                          numericInput("marinesurvivalmean",
+                                       "Average marine survival:",
+                                       min = 0,
+                                       max =1,
+                                       value = 2.6578/100),
+                          numericInput("marinesurvivalsd",
+                                       "Standard Deviation marine survival:",
+                                       min = 0,
+                                       max =1,
+                                       value = .0001)
+                      ),
+                                        # Show a plot of the generated distribution
+                      mainPanel(
+                          tabsetPanel(type = "tabs",
+                                      tabPanel("Input distributions", plotOutput("distPlot")),
+                                      tabPanel("Management Choice", plotOutput("damPlot")),
+                                      tabPanel("Recruit per spawner", plotOutput("recruitPlot"))
+                                      )))))
